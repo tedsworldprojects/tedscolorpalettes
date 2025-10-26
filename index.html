@@ -179,12 +179,22 @@ body {
   letter-spacing: 0.1em;
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
+  transition: opacity 200ms ease-in-out;
+}
+
+/* Hide primary label on hover/focus for cleaner UI */
+.color-column:has(.color-info:hover) .primary-label,
+.color-column:has(.hex-code-input:focus) .primary-label {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .color-info {
   text-align: center;
   transition: opacity 300ms;
   opacity: 0;
+  width: 100%;
+  max-width: 200px;
 }
 
 .color-column:hover .color-info {
@@ -215,9 +225,41 @@ body {
   }
 }
 
+/* Styles for the new editable input */
+.hex-code-input {
+  /* Mimic h2 styles */
+  font-family: inherit;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  
+  /* Input-specific styles */
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  width: 100%;
+  padding: 0;
+  margin-bottom: calc(1rem - 2px); /* Account for border */
+  text-align: center;
+  outline: none;
+  transition: border-color 150ms ease-in-out;
+}
+
+.hex-code-input:focus {
+  border-bottom: 2px solid currentColor;
+}
+
+@media (min-width: 768px) {
+  .hex-code-input {
+    font-size: 1.875rem;
+  }
+}
+
 .actions {
   display: flex;
   gap: 1rem;
+  justify-content: center;
 }
 
 .action-button {
@@ -554,11 +596,15 @@ const generateHarmoniousColor = (baseHue, scheme, index, total) => {
 };
 
 const generateLocalPalette = (lockedColors = []) => {
-  const finalPalette = lockedColors.map(hex => ({ hex, isPrimary: false }));
+  // Map locked colors first. The first locked color (if any) is primary.
+  const finalPalette = lockedColors.map((hex, index) => ({ 
+    hex, 
+    isPrimary: index === 0 
+  }));
+  
   const numToGenerate = 5 - lockedColors.length;
   
   if (numToGenerate <= 0) {
-    if(finalPalette.length > 0) finalPalette[0].isPrimary = true;
     return finalPalette.slice(0, 5);
   }
 
@@ -582,7 +628,8 @@ const generateLocalPalette = (lockedColors = []) => {
     allHexCodes.add(newHex);
     finalPalette.push({
       hex: newHex,
-      isPrimary: i === 0,
+      // The first generated color is primary ONLY if there are no locked colors.
+      isPrimary: lockedColors.length === 0 && i === 0,
     });
   }
 
@@ -749,14 +796,45 @@ const Header = ({ onToggleHistory, onGeneratePalette }) => {
 };
 
 // --- From components/ColorColumn.tsx ---
-const ColorColumn = ({ color, isLocked, onToggleLock, onCopy }) => {
+const ColorColumn = ({ color, isLocked, onToggleLock, onCopy, onPrimaryColorUpdate }) => {
   const [justCopied, setJustCopied] = useState(false);
+  const [editedHex, setEditedHex] = useState(color.hex);
   const textColor = getContrastingTextColor(color.hex);
+
+  useEffect(() => {
+    setEditedHex(color.hex);
+  }, [color.hex]);
 
   const handleCopyClick = () => {
     onCopy();
     setJustCopied(true);
     setTimeout(() => setJustCopied(false), 1500);
+  };
+  
+  const handleHexChange = (e) => {
+    setEditedHex(e.target.value);
+  };
+
+  const handleHexSubmit = (e) => {
+    if (e.key === 'Enter') {
+      if (/^#?([0-9A-F]{6})$/i.test(editedHex)) {
+        const formattedHex = (editedHex.startsWith('#') ? editedHex : `#${editedHex}`).toUpperCase();
+        if (formattedHex !== color.hex) {
+          onPrimaryColorUpdate?.(formattedHex);
+        }
+      } else {
+        setEditedHex(color.hex); // Revert on invalid format
+      }
+      e.target.blur();
+    }
+    if (e.key === 'Escape') {
+      setEditedHex(color.hex);
+      e.target.blur();
+    }
+  };
+  
+  const handleBlur = () => {
+    setEditedHex(color.hex);
   };
 
   return (
@@ -776,9 +854,22 @@ const ColorColumn = ({ color, isLocked, onToggleLock, onCopy }) => {
         </div>
       )}
       <div className="color-info">
-        <h2 className="hex-code" onClick={handleCopyClick}>
-          {color.hex}
-        </h2>
+        {color.isPrimary && onPrimaryColorUpdate ? (
+          <input
+            type="text"
+            className="hex-code-input"
+            value={editedHex}
+            onChange={handleHexChange}
+            onKeyDown={handleHexSubmit}
+            onBlur={handleBlur}
+            style={{ color: 'inherit' }}
+            aria-label="Editable primary hex code"
+          />
+        ) : (
+          <h2 className="hex-code" onClick={handleCopyClick}>
+            {color.hex}
+          </h2>
+        )}
         <div className="actions">
           <button
             onClick={onToggleLock}
@@ -818,7 +909,7 @@ const App = () => {
   const [paletteHistory, setPaletteHistory] = useState([]);
   const [isHistoryPanelOpen, setIsHistoryPanelOpen] = useState(false);
 
-  const handleGeneratePalette = useCallback(() => {
+  const handleGeneratePalette = useCallback((overrideLockedColors) => {
     setLoading(true);
     setError(null);
     try {
@@ -826,7 +917,23 @@ const App = () => {
         setPaletteHistory(prev => [palette, ...prev.slice(0, 9)]);
       }
       
-      const newPalette = generateLocalPalette(lockedColors);
+      let colorsToLock = Array.isArray(overrideLockedColors) ? overrideLockedColors : lockedColors;
+
+      // Sort the locked colors based on their current position in the palette
+      // to ensure the first one visually becomes the new primary.
+      if (!overrideLockedColors && colorsToLock.length > 1) {
+          const sortedLockedColors = [...colorsToLock].sort((a, b) => {
+              const indexA = palette.findIndex(c => c.hex === a);
+              const indexB = palette.findIndex(c => c.hex === b);
+              // if a color isn't found (shouldn't happen), keep it at the end
+              if (indexA === -1) return 1;
+              if (indexB === -1) return -1;
+              return indexA - indexB;
+          });
+          colorsToLock = sortedLockedColors;
+      }
+
+      const newPalette = generateLocalPalette(colorsToLock);
       setPalette(newPalette);
 
     } catch (err) {
@@ -840,6 +947,21 @@ const App = () => {
   useEffect(() => {
     handleGeneratePalette();
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      const target = event.target;
+      if (event.code === 'Space' && !['INPUT', 'TEXTAREA'].includes(target.tagName)) {
+        event.preventDefault();
+        handleGeneratePalette();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleGeneratePalette]);
 
   const handleToggleLock = (hex) => {
     setLockedColors(prev =>
@@ -863,9 +985,15 @@ const App = () => {
     setIsHistoryPanelOpen(false);
   };
 
+  const handlePrimaryColorUpdate = (newHex) => {
+    const formattedHex = newHex.startsWith('#') ? newHex : `#${newHex}`;
+    setLockedColors([formattedHex]);
+    handleGeneratePalette([formattedHex]);
+  };
+
   return (
     <div className="app-container">
-      <Header onToggleHistory={handleToggleHistory} onGeneratePalette={handleGeneratePalette} />
+      <Header onToggleHistory={handleToggleHistory} onGeneratePalette={() => handleGeneratePalette()} />
       <main className="main-content">
         {loading && palette.length === 0 ? (
           <div className="loading-overlay-full">
@@ -880,6 +1008,7 @@ const App = () => {
               isLocked={lockedColors.includes(color.hex)}
               onToggleLock={() => handleToggleLock(color.hex)}
               onCopy={() => handleCopy(color.hex)}
+              onPrimaryColorUpdate={handlePrimaryColorUpdate}
             />
           ))
         )}
@@ -903,6 +1032,10 @@ const App = () => {
         history={paletteHistory}
         onSelectPalette={handleSelectFromHistory}
       />
+      
+      <div className="spacebar-hint">
+        Press <kbd>Spacebar</kbd> to generate a new palette
+      </div>
       
       <Toast message={copiedHex ? `Copied ${copiedHex} to clipboard!` : null} />
     </div>

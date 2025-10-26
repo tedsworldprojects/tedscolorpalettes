@@ -2,13 +2,11 @@
   padding: 1rem;
   background-color: #111827;
   color: white;
-  text-align: center;
   z-index: 10;
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
-  position: relative;
+  justify-content: space-between;
   flex-shrink: 0;
 }
 
@@ -17,12 +15,6 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-}
-
-.header-icon {
-  width: 2rem;
-  height: 2rem;
-  color: #60a5fa;
 }
 
 .app-title {
@@ -38,9 +30,7 @@
 .app-title .r { color: #f472b6; }
 .app-title .palettes { color: #60a5fa; }
 
-.history-button {
-  position: absolute;
-  right: 1rem;
+.header-action-button {
   padding: 0.5rem;
   border-radius: 9999px;
   transition: background-color 200ms;
@@ -50,16 +40,16 @@
   cursor: pointer;
 }
 
-.history-button:hover {
+.header-action-button:hover {
   background-color: #374151;
 }
 
-.history-button:focus-visible {
+.header-action-button:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px #60a5fa;
 }
 
-.history-button .icon {
+.header-action-button .icon {
   width: 1.5rem;
   height: 1.5rem;
   display: block;

@@ -95,11 +95,15 @@ const generateHarmoniousColor = (baseHue: number, scheme: Scheme, index: number,
 };
 
 export const generateLocalPalette = (lockedColors: string[] = []): Color[] => {
-  const finalPalette: Color[] = lockedColors.map(hex => ({ hex, isPrimary: false }));
+  // Map locked colors first. The first locked color (if any) is primary.
+  const finalPalette: Color[] = lockedColors.map((hex, index) => ({ 
+    hex, 
+    isPrimary: index === 0 
+  }));
+  
   const numToGenerate = 5 - lockedColors.length;
   
   if (numToGenerate <= 0) {
-    if(finalPalette.length > 0) finalPalette[0].isPrimary = true;
     return finalPalette.slice(0, 5);
   }
 
@@ -123,7 +127,8 @@ export const generateLocalPalette = (lockedColors: string[] = []): Color[] => {
     allHexCodes.add(newHex);
     finalPalette.push({
       hex: newHex,
-      isPrimary: i === 0, // Mark the first generated color as primary
+      // The first generated color is primary ONLY if there are no locked colors.
+      isPrimary: lockedColors.length === 0 && i === 0,
     });
   }
 

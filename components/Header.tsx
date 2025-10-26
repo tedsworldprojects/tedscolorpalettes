@@ -4,13 +4,20 @@ import './Header.css';
 
 interface HeaderProps {
   onToggleHistory: () => void;
+  onGeneratePalette: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onToggleHistory }) => {
+const Header: React.FC<HeaderProps> = ({ onToggleHistory, onGeneratePalette }) => {
   return (
     <header className="app-header">
+      <button
+        onClick={onGeneratePalette}
+        className="header-action-button"
+        aria-label="Generate new palette"
+      >
+        <PaletteIcon className="icon" />
+      </button>
       <div className="title-container">
-        <PaletteIcon className="header-icon" />
         <h1 className="app-title">
           TEDS{' '}
           <span className="c">C</span>
@@ -23,7 +30,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleHistory }) => {
       </div>
       <button
         onClick={onToggleHistory}
-        className="history-button"
+        className="header-action-button"
         aria-label="View palette history"
       >
         <HistoryIcon className="icon" />

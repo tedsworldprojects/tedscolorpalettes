@@ -25,6 +25,8 @@
   text-align: center;
   transition: opacity 300ms;
   opacity: 0;
+  width: 100%;
+  max-width: 200px;
 }
 
 .color-column:hover .color-info {
@@ -55,9 +57,41 @@
   }
 }
 
+/* Styles for the new editable input */
+.hex-code-input {
+  /* Mimic h2 styles */
+  font-family: inherit;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  
+  /* Input-specific styles */
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  width: 100%;
+  padding: 0;
+  margin-bottom: calc(1rem - 2px); /* Account for border */
+  text-align: center;
+  outline: none;
+  transition: border-color 150ms ease-in-out;
+}
+
+.hex-code-input:focus {
+  border-bottom: 2px solid currentColor;
+}
+
+@media (min-width: 768px) {
+  .hex-code-input {
+    font-size: 1.875rem;
+  }
+}
+
 .actions {
   display: flex;
   gap: 1rem;
+  justify-content: center;
 }
 
 .action-button {
