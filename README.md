@@ -2,7 +2,7 @@
 
 An advanced, offline-first color palette generator for designers and developers. Instantly create beautiful, harmonious five-color palettes, lock your favorites, and get inspired with a single keystroke.
 
-![TEDS COLOR PALETTES](https://i.imgur.com/8Q9F8Q1.png)
+![TEDS COLOR PALETTES]
 
 ## ✨ Features
 
