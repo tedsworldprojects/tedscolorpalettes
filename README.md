@@ -1,44 +1,49 @@
-# Teds Super-Fast Color Wheel
+# TEDS COLOR PALETTES
 
-A professional-grade, interactive color scheme generator designed for designers, developers, and artists.
+An advanced, offline-first color palette generator for designers and developers. Instantly create beautiful, harmonious five-color palettes, lock your favorites, and get inspired with a single keystroke.
 
-## 🚀 Overview
+![TEDS COLOR PALETTES](https://i.imgur.com/8Q9F8Q1.png)
 
-**Teds Super-Fast Wheel** is a highly responsive and intuitive application for creating beautiful and harmonious color palettes based on established color theory principles.
+## ✨ Features
 
-The application is engineered as a **standalone, single-file web app**. This means all its logic, styling, and dependencies are bundled into a single `index.html` file, allowing it to run directly in any modern browser, even when offline (after its initial load).
+-   **Instant Palette Generation**: Press the `Spacebar` or click the palette icon to generate a new, aesthetically pleasing five-color palette instantly.
+-   **Harmonious Color Schemes**: The app's algorithm utilizes color theory principles (such as analogous, triadic, and complementary schemes) to ensure every palette is well-balanced.
+-   **Lock Favorite Colors**: Love a color? Lock it in place! Subsequent palettes will be intelligently generated to perfectly complement your locked selections.
+-   **Primary Color Control**: The first color in a generated set (or the first one you lock) becomes the primary driver for the palette. You can even edit its HEX code directly to fine-tune the entire scheme on the fly.
+-   **One-Click Copy**: Simply click a color's HEX code or its copy icon to instantly save it to your clipboard. A confirmation toast lets you know it worked.
+-   **Palette History**: Never lose a great idea again. The app keeps a history of your last 10 generated palettes, accessible in a convenient side panel. Click any historical palette to instantly load it.
+-   **100% Offline**: Works entirely in your browser. No internet connection is needed after the initial load, making it a reliable tool anywhere, anytime.
+-   **Fully Responsive**: Enjoy a seamless experience whether you're on a large desktop monitor or a mobile device.
+-   **Smart Text Contrast**: All text and icons automatically switch between black and white to ensure maximum readability against any color background.
 
-## ✨ Core Features
+## 🚀 How to Use
 
-The application's interface is divided into three main, interactive sections:
+1.  **Generate a Palette**:
+    -   Press the **`Spacebar`** key for the fastest generation.
+    -   Alternatively, click the **Palette Icon** in the top-left of the header.
 
-### 1. Color Selection Panel
-This is the primary control center where you define your starting color.
+2.  **Lock a Color**:
+    -   Hover over a color you like to reveal the action icons.
+    -   Click the **Unlock Icon**. It will change to a **Lock Icon**, and this color will be preserved in all future generations until you unlock it.
 
--   **Interactive Color Wheel:** Visually select a color by dragging the handle to adjust **hue** and **saturation**. The wheel is fully responsive and adapts its size to fit any screen.
--   **Lightness Slider:** Control the **lightness** or brightness of your selected color, from pure black to pure white.
--   **Base Color Information:** Instantly view and copy the precise values of your chosen base color in **HEX**, **RGB**, and **HSL** formats.
+3.  **Copy a Color**:
+    -   Hover over a color.
+    -   Click directly on the **HEX code** (e.g., `#34D399`).
+    -   Or, click the **Copy Icon**.
 
-### 2. Color Combination (Harmony) Panel
-Apply different color theory rules to your base color to generate a palette.
+4.  **Edit the Primary Color**:
+    -   The first color in the palette is marked "Primary". Its HEX code is an editable input field.
+    -   Click the HEX code, type a new valid hex value (e.g., `#FF5733`), and press **`Enter`**.
+    -   A new palette will be generated with your chosen color as the new primary.
 
--   **Harmony Selection:** Choose from six professionally recognized color harmonies:
-    -   `Complementary`
-    -   `Analogous`
-    -   `Triadic`
-    -   `Tetradic`
-    -   `Split Complementary`
-    -   `Monochromatic`
--   **Instant Updates:** Selecting an option immediately recalculates and updates the color palette in real-time.
+5.  **View History**:
+    -   Click the **History Icon** in the top-right of the header to open the side panel.
+    -   Click on any past palette in the list to load it into the main view.
+    -   Click the **`X`** or outside the panel to close it.
 
-### 3. Palette Display Panel
-The final output, showcasing the generated color scheme.
+## 💻 Tech Stack
 
--   **Visual Swatches:** The generated colors are displayed as large, vertical swatches, making it easy to visualize how they work together.
--   **Dynamic Text Contrast:** The HEX code on each swatch automatically switches between black and white to ensure readability against any color background.
--   **One-Click Copy:** Click any color swatch in the palette to instantly copy its HEX code to your clipboard.
-
-## 🛠️ Technical Implementation
-
--   **Technology Stack:** The app is built with **React**, **D3.js** (`d3-color`) for robust color calculations, and **Tailwind CSS** for styling.
--   **Single-File Architecture:** To ensure offline capability and eliminate cross-origin (CORS) errors when running from a local file, the entire application is self-contained within `index.html`. It uses the **Babel Standalone** library to transpile JSX and modern JavaScript directly in the browser.
+-   **Framework**: React
+-   **Language**: TypeScript
+-   **Styling**: Plain CSS with a utility-first-inspired methodology.
+-   **Build**: In-browser transpilation via Babel Standalone for a simple, single-file deployment.
