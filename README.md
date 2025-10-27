@@ -1,4 +1,4 @@
-# Teds Super-Fast Wheel v1.0
+# Teds Super-Fast Color Wheel
 
 A professional-grade, interactive color scheme generator designed for designers, developers, and artists.
 
