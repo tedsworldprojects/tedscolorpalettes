@@ -27,6 +27,14 @@ const Header: React.FC<HeaderProps> = ({ onToggleHistory, onGeneratePalette }) =
           <span className="r">R</span>{' '}
           <span className="palettes">PALETTES</span>
         </h1>
+        <a 
+          href="https://youtube.com/@tedsworldprojects" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="youtube-link"
+        >
+          @tedsworldprojects
+        </a>
       </div>
       <button
         onClick={onToggleHistory}
